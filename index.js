@@ -27,6 +27,8 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
     const volunteerActivities = client.db("VolunteerNetwork").collection("activities");
     const selectedTask = client.db("VolunteerNetwork").collection("selectedTask");
+    const addEvent = client.db("VolunteerNetwork").collection("events");
+
 
     app.post('/addActivity', (req, res) => {
         const activity = req.body;
@@ -34,6 +36,22 @@ client.connect(err => {
             .then(result => {
                 //    console.log(result.insertedCount);
                 res.send(result.insertedCount);
+            })
+    })
+
+    app.post('/addEvent', (req, res) => {
+        const event = req.body;
+        addEvent.insertOne(event)
+            .then(result => {
+                 console.log(result.insertedCount);
+                res.send(result.insertedCount > 0);
+            })
+    })
+
+    app.get('/events', (req, res) => {
+        addEvent.find({})
+            .toArray((err, documents) => {
+                res.send(documents)
             })
     })
 
@@ -98,7 +116,7 @@ client.connect(err => {
                 res.send(documents)
             })
     })
-
+    
 
 });
 
